@@ -1,26 +1,38 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { CartItem } from "@/types";
+import { CartItem, Customer } from "@/types";
 import { useState, useEffect } from "react";
+import { getReceiptSettings, ReceiptSettings, generateReceiptQRData } from "@/lib/receiptStore";
+import Image from "next/image";
+import QRCode from "@/components/ui/QRCode";
 
 interface PrintBillProps {
   items: CartItem[];
+  customer?: Customer;
+  discount?: number;
+  orderId?: string;
 }
 
-export default function PrintBill({ items }: PrintBillProps) {
+export default function PrintBill({ items, customer, discount = 0, orderId }: PrintBillProps) {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax = subtotal * 0.1;
-  const total = subtotal + tax;
+  const afterDiscount = subtotal - discount;
+  const tax = afterDiscount * 0.1;
+  const total = afterDiscount + tax;
   const now = new Date();
 
-  const [orderNumber, setOrderNumber] = useState(0);
-  const [barcodeLines, setBarcodeLines] = useState<string[]>([]);
+  const [orderNumber, setOrderNumber] = useState("");
+  const [settings, setSettings] = useState<ReceiptSettings | null>(null);
+  const [qrData, setQrData] = useState("");
 
   useEffect(() => {
-    setOrderNumber(Math.floor(Math.random() * 10000));
-    setBarcodeLines([...Array(30)].map(() => Math.random() > 0.5 ? '2px' : '1px'));
-  }, []);
+    const id = orderId || `ORD-${Date.now().toString(36).toUpperCase()}`;
+    setOrderNumber(id);
+    setSettings(getReceiptSettings());
+    setQrData(generateReceiptQRData(id, total));
+  }, [orderId, total]);
+
+  if (!settings) return null;
 
   return (
     <div id="printable-bill" className="print-only p-8 bg-white text-black font-mono w-[80mm] mx-auto text-sm">
@@ -52,19 +64,39 @@ export default function PrintBill({ items }: PrintBillProps) {
         }
       `}</style>
       
+      {/* Header with Logo */}
       <div className="text-center mb-6">
-        <h1 className="text-xl font-bold uppercase tracking-widest">Premium POS</h1>
+        {settings.businessLogo && (
+          <div className="relative w-16 h-16 mx-auto mb-2">
+            <Image
+              src={settings.businessLogo}
+              alt="Logo"
+              fill
+              className="object-contain"
+            />
+          </div>
+        )}
+        <h1 className="text-xl font-bold uppercase tracking-widest">
+          {settings.businessName}
+        </h1>
         <p className="text-sm font-bold mt-2">*** RECEIPT ***</p>
-        <p className="text-xs mt-2">123 Business Street, Suite 100</p>
-        <p className="text-xs">City, State 12345</p>
-        <p className="text-xs">Tel: (555) 0123-4567</p>
+        {settings.address && <p className="text-xs mt-2">{settings.address}</p>}
+        {settings.phone && <p className="text-xs">{settings.phone}</p>}
       </div>
 
-      <div className="border-t border-b border-dashed py-2 mb-4 flex justify-between text-xs">
-        <span>Order: #{orderNumber}</span>
-        <span>{now.toLocaleDateString()} {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      {/* Order Info */}
+      <div className="border-t border-b border-dashed py-2 mb-4">
+        <div className="flex justify-between text-xs">
+          <span>Order: {orderNumber}</span>
+          <span>{now.toLocaleDateString()}</span>
+        </div>
+        <div className="flex justify-between text-xs">
+          <span>{now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          {customer && <span>Customer: {customer.name}</span>}
+        </div>
       </div>
 
+      {/* Items */}
       <table className="w-full mb-4">
         <thead>
           <tr className="border-b border-dashed">
@@ -78,42 +110,52 @@ export default function PrintBill({ items }: PrintBillProps) {
             <tr key={item.id} className="text-xs">
               <td className="py-2 pr-2">{item.name}</td>
               <td className="py-2 text-center">{item.quantity}</td>
-              <td className="py-2 text-right">${`$`}{(item.price * item.quantity).toFixed(2)}</td>
+              <td className="py-2 text-right">
+                {settings.currency}{(item.price * item.quantity).toFixed(2)}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
+      {/* Totals */}
       <div className="border-t border-dashed pt-4 space-y-1">
         <div className="flex justify-between">
           <span>Subtotal:</span>
-          <span>${`$`}{subtotal.toFixed(2)}</span>
+          <span>{settings.currency}{subtotal.toFixed(2)}</span>
         </div>
+        
+        {discount > 0 && (
+          <div className="flex justify-between text-green-600">
+            <span>Discount:</span>
+            <span>-{settings.currency}{discount.toFixed(2)}</span>
+          </div>
+        )}
+        
         <div className="flex justify-between">
-          <span>Tax (10%):</span>
-          <span>${`$`}{tax.toFixed(2)}</span>
+          <span>{settings.taxLabel}:</span>
+          <span>{settings.currency}{tax.toFixed(2)}</span>
         </div>
+        
         <div className="flex justify-between font-bold text-lg pt-2 mt-2 border-t border-double">
           <span>TOTAL:</span>
-          <span>${`$`}{total.toFixed(2)}</span>
+          <span>{settings.currency}{total.toFixed(2)}</span>
         </div>
       </div>
 
+      {/* Footer */}
       <div className="mt-8 text-center">
-        <p className="text-xs uppercase font-bold tracking-widest">Thank You!</p>
-        <p className="text-[10px] mt-1 italic">Please come again</p>
+        {settings.footerText && (
+          <p className="text-xs whitespace-pre-line mb-4">{settings.footerText}</p>
+        )}
         
-        <div className="mt-4 flex justify-center opacity-50">
-          <div className="flex gap-[1px] h-8 items-end">
-            {barcodeLines.map((width, i) => (
-              <div 
-                key={i} 
-                className="bg-black" 
-                style={{ width, height: '100%' }}
-              ></div>
-            ))}
+        {/* QR Code */}
+        {settings.showQRCode && qrData && (
+          <div className="flex flex-col items-center mt-4">
+            <p className="text-[10px] mb-2">Scan for digital receipt</p>
+            <QRCode value={qrData} size={80} />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

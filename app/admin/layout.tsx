@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Package, Tag, ArrowLeft, Menu, X, LayoutDashboard } from "lucide-react";
+import { Package, Tag, ArrowLeft, Menu, X, LayoutDashboard, BarChart3, Settings } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
+  { href: "/admin/dashboard", label: "Dashboard", icon: BarChart3 },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/categories", label: "Categories", icon: Tag },
+  { href: "/admin/settings", label: "Receipt Settings", icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
