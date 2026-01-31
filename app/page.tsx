@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Header from "@/components/POS/Header";
 import ProductGrid from "@/components/POS/ProductGrid";
 import Cart from "@/components/POS/Cart";
@@ -8,25 +8,31 @@ import Scanner from "@/components/POS/Scanner";
 import PrintBill from "@/components/POS/PrintBill";
 import QuickAddModal from "@/components/POS/QuickAddModal";
 import CheckoutModal from "@/components/POS/CheckoutModal";
+import PWAInstallPrompt from "@/components/PWA/PWAInstallPrompt";
+import KeyboardShortcutsHelp from "@/components/PWA/KeyboardShortcutsHelp";
 import { Product, CartItem } from "@/types";
 import { useProducts } from "@/contexts/ProductContext";
 import { AnimatePresence } from "framer-motion";
 import { initializeCoupons } from "@/lib/discountStore";
 import { soundEffects } from "@/lib/sounds";
+import { useKeyboardShortcuts, useBarcodeScanner } from "@/hooks/useKeyboardShortcuts";
+import { useToast } from "@/contexts/ToastContext";
 
 export default function POSPage() {
   const { products } = useProducts();
+  const { showToast } = useToast();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize coupons on mount
   useEffect(() => {
     initializeCoupons();
   }, []);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = useCallback((product: Product) => {
     soundEffects.addToCart();
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
@@ -37,7 +43,7 @@ export default function POSPage() {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
-  };
+  }, []);
 
   const handleUpdateQuantity = (id: string, delta: number) => {
     setCartItems((prev) =>
@@ -54,12 +60,15 @@ export default function POSPage() {
   };
 
   const handleScanSuccess = useCallback((decodedText: string) => {
-    const product = products.find((p) => p.qrCode === decodedText || p.id === decodedText);
+    const product = products.find((p) => p.qrCode === decodedText || p.id === decodedText || p.sku === decodedText);
     if (product) {
       handleAddToCart(product);
       setIsScannerOpen(false);
+      showToast(`Added: ${product.name}`, "success");
+    } else {
+      showToast(`Product not found: ${decodedText}`, "error");
     }
-  }, [products]);
+  }, [products, handleAddToCart, showToast]);
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
@@ -75,6 +84,93 @@ export default function POSPage() {
     // Clear cart
     setCartItems([]);
   };
+
+  const handleClearCart = () => {
+    if (cartItems.length === 0) return;
+    setCartItems([]);
+    showToast("Cart cleared", "success");
+  };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: "s",
+      ctrlKey: true,
+      description: "Open scanner",
+      action: () => setIsScannerOpen(true),
+    },
+    {
+      key: "Enter",
+      ctrlKey: true,
+      description: "Checkout",
+      action: () => {
+        if (cartItems.length > 0) {
+          handleCheckout();
+        }
+      },
+    },
+    {
+      key: "a",
+      ctrlKey: true,
+      description: "Quick add product",
+      action: () => setIsQuickAddOpen(true),
+    },
+    {
+      key: "f",
+      ctrlKey: true,
+      description: "Focus search",
+      action: () => {
+        const searchInput = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      },
+    },
+    {
+      key: "Delete",
+      ctrlKey: true,
+      description: "Clear cart",
+      action: handleClearCart,
+    },
+    // Number keys for quantity
+    ...Array.from({ length: 9 }, (_, i) => ({
+      key: String(i + 1),
+      description: `Set quantity to ${i + 1}`,
+      action: () => {
+        if (cartItems.length > 0) {
+          const lastItem = cartItems[cartItems.length - 1];
+          setCartItems(prev =>
+            prev.map(item =>
+              item.id === lastItem.id ? { ...item, quantity: i + 1 } : item
+            )
+          );
+        }
+      },
+    })),
+    {
+      key: "+",
+      description: "Increase last item quantity",
+      action: () => {
+        if (cartItems.length > 0) {
+          const lastItem = cartItems[cartItems.length - 1];
+          handleUpdateQuantity(lastItem.id, 1);
+        }
+      },
+    },
+    {
+      key: "-",
+      description: "Decrease last item quantity",
+      action: () => {
+        if (cartItems.length > 0) {
+          const lastItem = cartItems[cartItems.length - 1];
+          handleUpdateQuantity(lastItem.id, -1);
+        }
+      },
+    },
+  ]);
+
+  // USB Barcode scanner support
+  useBarcodeScanner(handleScanSuccess);
 
   return (
     <main className="min-h-screen bg-background relative">
@@ -137,6 +233,12 @@ export default function POSPage() {
 
         {/* Hidden Print Area */}
         <PrintBill items={cartItems} />
+        
+        {/* PWA Install Prompt */}
+        <PWAInstallPrompt />
+        
+        {/* Keyboard Shortcuts Help */}
+        <KeyboardShortcutsHelp />
       </div>
     </main>
   );

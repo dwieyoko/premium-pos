@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { ToastProvider } from "@/contexts/ToastContext";
+import PWARegister from "@/components/PWA/PWARegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,23 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Premium POS",
   description: "Modern Point of Sale System with QR Scanner",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Premium POS",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0066cc",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -26,12 +44,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ProductProvider>
           <ToastProvider>
             {children}
+            <PWARegister />
           </ToastProvider>
         </ProductProvider>
       </body>
