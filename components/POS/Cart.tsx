@@ -1,8 +1,10 @@
 "use client";
 
 import { CartItem } from "@/types";
-import { Minus, Plus, Trash2, ReceiptText, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, ReceiptText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import EmptyCartIllustration from "@/components/illustrations/EmptyCartIllustration";
+import { soundEffects } from "@/lib/sounds";
 
 interface CartProps {
   items: CartItem[];
@@ -15,6 +17,18 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.1; // 10% tax
   const total = subtotal + tax;
+
+  const handleCheckout = () => {
+    soundEffects.checkout();
+    onCheckout();
+  };
+
+  const handleUpdateQuantity = (id: string, delta: number) => {
+    if (delta > 0) {
+      soundEffects.click();
+    }
+    onUpdateQuantity(id, delta);
+  };
 
   return (
     <div className="flex flex-col h-full premium-card rounded-2xl overflow-hidden">
@@ -36,22 +50,25 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout
       {/* Cart Items */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {items.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-8">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <ShoppingBag className="h-10 w-10 text-primary/50" />
-            </div>
+          <motion.div 
+            className="h-full flex flex-col items-center justify-center text-muted-foreground py-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <EmptyCartIllustration className="w-32 h-32 mb-4" />
             <p className="font-semibold text-foreground">Your cart is empty</p>
             <p className="text-sm text-muted-foreground mt-1">Add items to get started</p>
-          </div>
+          </motion.div>
         ) : (
           <AnimatePresence initial={false}>
             {items.map((item) => (
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -20, scale: 0.95 }}
                 className="flex items-center gap-3 bg-white p-4 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex-1 min-w-0">
@@ -62,14 +79,21 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-1 bg-secondary rounded-xl p-1">
                   <button
-                    onClick={() => onUpdateQuantity(item.id, -1)}
+                    onClick={() => handleUpdateQuantity(item.id, -1)}
                     className="p-2 hover:bg-white rounded-lg transition-colors text-primary"
                   >
                     <Minus className="h-3 w-3" />
                   </button>
-                  <span className="w-8 text-center font-bold text-primary">{item.quantity}</span>
+                  <motion.span 
+                    key={item.quantity}
+                    initial={{ scale: 1.3 }}
+                    animate={{ scale: 1 }}
+                    className="w-8 text-center font-bold text-primary"
+                  >
+                    {item.quantity}
+                  </motion.span>
                   <button
-                    onClick={() => onUpdateQuantity(item.id, 1)}
+                    onClick={() => handleUpdateQuantity(item.id, 1)}
                     className="p-2 hover:bg-white rounded-lg transition-colors text-primary"
                   >
                     <Plus className="h-3 w-3" />
@@ -101,16 +125,24 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem, onCheckout
         </div>
         <div className="flex justify-between text-xl font-bold pt-3 border-t border-primary/20">
           <span className="text-foreground">Total</span>
-          <span className="gradient-text">${total.toFixed(2)}</span>
+          <motion.span 
+            key={total}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            className="gradient-text"
+          >
+            ${total.toFixed(2)}
+          </motion.span>
         </div>
         
-        <button
-          onClick={onCheckout}
+        <motion.button
+          onClick={handleCheckout}
           disabled={items.length === 0}
           className="w-full btn-gradient py-4 rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all mt-2"
+          whileTap={{ scale: 0.98 }}
         >
           Checkout & Print
-        </button>
+        </motion.button>
       </div>
     </div>
   );
