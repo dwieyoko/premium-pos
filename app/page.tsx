@@ -1,23 +1,33 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Header from "@/components/POS/Header";
 import ProductGrid from "@/components/POS/ProductGrid";
 import Cart from "@/components/POS/Cart";
 import Scanner from "@/components/POS/Scanner";
 import PrintBill from "@/components/POS/PrintBill";
 import QuickAddModal from "@/components/POS/QuickAddModal";
+import CheckoutModal from "@/components/POS/CheckoutModal";
 import { Product, CartItem } from "@/types";
 import { useProducts } from "@/contexts/ProductContext";
 import { AnimatePresence } from "framer-motion";
+import { initializeCoupons } from "@/lib/discountStore";
+import { soundEffects } from "@/lib/sounds";
 
 export default function POSPage() {
   const { products } = useProducts();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  // Initialize coupons on mount
+  useEffect(() => {
+    initializeCoupons();
+  }, []);
 
   const handleAddToCart = (product: Product) => {
+    soundEffects.addToCart();
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -52,9 +62,18 @@ export default function POSPage() {
   }, [products]);
 
   const handleCheckout = () => {
+    if (cartItems.length === 0) return;
+    setIsCheckoutOpen(true);
+  };
+
+  const handleCheckoutComplete = () => {
+    // Print receipt
     setTimeout(() => {
       window.print();
     }, 100);
+    
+    // Clear cart
+    setCartItems([]);
   };
 
   return (
@@ -106,6 +125,14 @@ export default function POSPage() {
         <QuickAddModal
           isOpen={isQuickAddOpen}
           onClose={() => setIsQuickAddOpen(false)}
+        />
+
+        {/* Checkout Modal */}
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          items={cartItems}
+          onCheckoutComplete={handleCheckoutComplete}
         />
 
         {/* Hidden Print Area */}
