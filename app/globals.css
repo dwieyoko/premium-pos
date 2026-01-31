@@ -1,110 +1,176 @@
 @import "tailwindcss";
 
+/* Tailwind CSS 4 Theme Configuration - Blue Color Scheme */
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Blue color palette */
+  --color-background: #f0f7ff;
+  --color-foreground: #1e3a5f;
   
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-card: #ffffff;
+  --color-card-foreground: #1e3a5f;
   
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary: #0066cc;
+  --color-primary-foreground: #ffffff;
   
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: #e8f4fd;
+  --color-secondary-foreground: #0066cc;
   
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: #e8f4fd;
+  --color-muted-foreground: #5a7a9a;
   
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-}
-
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.75rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-  }
+  --color-accent: #f59e0b;
+  --color-accent-foreground: #ffffff;
+  
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  
+  --color-border: #d1e5f7;
+  --color-input: #d1e5f7;
+  --color-ring: #0066cc;
+  
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  
+  html {
+    color-scheme: light;
+  }
+  
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-/* Custom Scrollbar */
+/* Premium Card Styles */
+.premium-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid rgba(0, 102, 204, 0.1);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 102, 204, 0.05),
+    0 10px 20px -5px rgba(0, 102, 204, 0.08),
+    0 1px 3px rgba(0, 102, 204, 0.05);
+  transition: all 0.3s ease;
+}
+
+.premium-card:hover {
+  box-shadow:
+    0 8px 12px -2px rgba(0, 102, 204, 0.1),
+    0 20px 40px -10px rgba(0, 102, 204, 0.15),
+    0 1px 3px rgba(0, 102, 204, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Blue gradient button */
+.btn-gradient {
+  background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(0, 102, 204, 0.35);
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Header gradient */
+.header-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(240, 247, 255, 0.98) 0%,
+    rgba(232, 244, 253, 0.95) 100%
+  );
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 102, 204, 0.1);
+}
+
+/* Icon container styles */
+.icon-container {
+  background: linear-gradient(135deg, #e8f4fd 0%, #d1e5f7 100%);
+  border: 1px solid rgba(0, 102, 204, 0.15);
+  color: #0066cc;
+}
+
+/* Section styles */
+.section-light {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+}
+
+.section-blue {
+  background: linear-gradient(180deg, #e8f4fd 0%, #d1e5f7 100%);
+}
+
+/* Custom Scrollbar - Blue theme */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #e8f4fd;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--muted);
-  border-radius: 10px;
+  background: linear-gradient(180deg, #0066cc 0%, #0052a3 100%);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border);
+  background: linear-gradient(180deg, #0052a3 0%, #003d7a 100%);
 }
 
 /* Hide scrollbar for chrome, safari and opera */
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Table styles */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Category badge colors */
+.badge-beverages {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+}
+
+.badge-bakery {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #b45309;
+}
+
+.badge-food {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #047857;
+}
+
+/* Animation for floating effect */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
