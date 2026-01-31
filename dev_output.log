@@ -1,0 +1,55 @@
+
+> pos-app@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+✓ Ready in 1035ms
+ HEAD / 200 in 908ms (compile: 490ms, render: 419ms)
+ GET / 200 in 175ms (compile: 12ms, render: 163ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 96ms (compile: 7ms, render: 89ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+ GET / 200 in 87ms (compile: 8ms, render: 79ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 145ms (compile: 5ms, render: 140ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 88ms (compile: 5ms, render: 83ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 80ms (compile: 6ms, render: 74ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 89ms (compile: 5ms, render: 84ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 153ms (compile: 5ms, render: 148ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 181ms (compile: 11ms, render: 170ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 79ms (compile: 4ms, render: 75ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+ GET / 200 in 140ms (compile: 4ms, render: 135ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
+ GET / 200 in 475ms (compile: 142ms, render: 333ms)
+⨯ upstream image response failed for https://images.unsplash.com/photo-1587049016473-b1ec904f67b4?w=500&q=80 404
+⨯ upstream image response failed for https://images.unsplash.com/photo-1554467484-a4721ec39717?w=500&q=80 404
